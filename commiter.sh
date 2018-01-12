@@ -2,6 +2,6 @@
 
 git checkout master
 git add .
-git commit -am "website update"
+git commit -am "Commiter"
 git push
 echo Press Enter...
