@@ -11,7 +11,7 @@ def main():
 ##            break
     applelistlength = len(apples)
     for apple in apples:
-        for i in applelistlength:
-        applesvalue.append(apple
+        difference = int(apples[apple]) - int(apples[apple])
+        print(difference)
    
 main()
