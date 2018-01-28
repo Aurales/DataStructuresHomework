@@ -21,7 +21,7 @@ class Patient:
         self.name = name
         waitingroom.append(name)
         self.DoctorHelpTime = int(15 + random.randint(0,6))
-        HasBeenHelped = 0
+        HasBeenHelped = 0#0 means waiting, 1 means has been helped by a nurse, 2 means has seen a physician
 
 #Waiting Room
     #1 for entering patients
