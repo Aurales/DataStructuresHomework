@@ -30,15 +30,15 @@ class Patient:
     def getEnterTime(self):
         return self.enterTime
     
-    def examRoomTime(self,var):
-        self.examRoomEnterTime = var
+    def enterExamRoomTime(self,var):
+        self.enterExamRoomTime = var
         
-    def getExamRoomEnterTime(self):
-        return self.examRoomEnterTime
+    def getEnterExamRoomTime(self):
+        return self.enterExamRoomTime
     
-        #remove patient from simulation
     def exit(self, var):
         self.exitTime = var
+        
 
     def getExitTime(self):
         return self.exitTime
@@ -58,11 +58,10 @@ def treatPatient():
     """move patient from triage room to exam room"""
     ExamRoom.append(TriageRoom.pop(0))
     
-#Waiting Room for entering patients
+
+
 WaitingRoom = []
-#Triage Room for after visiting with a triage nurse
 TriageRoom = []
-#Exam Rooms
 ExamRoom = []
 
 
@@ -70,44 +69,80 @@ ExamRoom = []
 
 
 
-
-
 def main():
-    ExamRooms = 6#int(input("How many exam rooms are there? "))
-    Physicians = 6#int(input("How many Doctors are working? "))
-    Nurses = 6#int(input("How many nurses are working? "))
+    
+    ExamRooms = int(input("How many exam rooms are there? "))
+    Physicians = int(input("How many Doctors are working? "))
+    Nurses = int(input("How many nurses are working? "))
     HelpableNumber = min(Physicians, ExamRooms)
     patientsSeen = 0
+    Minute = 0
+    TimeIn = 0
+    WaitTime = 0
+    ExamTime = 0
     while True:
-        #Add patients
-        newPatients = int(input("How many new patients are there? "))
+       
+        newPatients = input("How many new patients are there? ")
+        if newPatients == "done" or newPatients == "Done":
+            break
+        elif newPatients == "":
+            newPatients = 0
+        else:
+            newPatients = int(newPatients)
         for i in range(newPatients):
-
-            patient= Patient()
-            patientsSeen +=1
+            patient = Patient()
+            patient.enter(Minute)
             WaitingRoom.append(patient)
-        print("Waiting before nurses: ", WaitingRoom)
-        print("Triage before nurses: ", TriageRoom)
+        ##print("Waiting before nurses: ", WaitingRoom, "\n")
+        ##print("Triage before nurses: ", TriageRoom, "\n")
         for i in range(Nurses):
             try:
-                callNurse()
-                
+                callNurse() 
             except IndexError:
                 break
-        print("Waiting after nurses: ", WaitingRoom)
-        print("Triage after nurses: ", TriageRoom)
-        #Add patients to exam rooms if there are any available
+        ##print("Waiting after nurses: ", WaitingRoom)
+        ##print("Triage after nurses: ", TriageRoom)
+        
         for i in range(HelpableNumber):
             if len(TriageRoom) > 0:
+                TriageRoom[0].enterExamRoomTime(Minute)
+                WaitTime = WaitTime + (TriageRoom[0].getEnterExamRoomTime() - TriageRoom[0].getEnterTime())
                 treatPatient()
                 HelpableNumber -=1
-        print("Exam after doctors: ", ExamRoom)
-        print("Triage after doctors: ", TriageRoom)
+        ##print("Exam after doctors: ", ExamRoom, "\n")
+        ##print("Triage after doctors: ", TriageRoom, "\n")
+        print("\n")
+        print("Patient Name and Time Left:")
         for patients in ExamRoom:
             patients.treatmentTime -=1
+            
             print(patients.name, patients.treatmentTime)
             if patients.treatmentTime == 0:
+                patients.exit(Minute)
+                ExamRoom.remove(patients)
+                ExamTime = ExamTime + (patients.getExitTime() - patients.getEnterExamRoomTime())
+                TimeIn = TimeIn + (patients.getExitTime() - patients.getEnterTime())
+                    
+                patientsSeen += 1
+                ##print("Patients Seen:", patientsSeen)
                 HelpableNumber += 1
                 del(patients)
-    Minute += 1
+        Minute += 1
+        print("\n")
+        print("Minutes Past:", Minute)
+        print("\n")
+        
+    print("\n")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("\n")
+    print("Time spent waiting for treatment: ", WaitTime)
+    print("Time spent in Exam Rooms:", ExamTime)
+    print("Time spent at the Physicians:", TimeIn)
+    print("This office saw ", patientsSeen, " patients in ", Minute, " minutes.")
+    averageVisitTime = (TimeIn/patientsSeen)
+    print("The average time spent at the physician's was ", averageVisitTime, "minutes.")
+    averageWaitTime = (WaitTime/patientsSeen)
+    print("The average time spent waiting for an Exam Room was ", averageWaitTime, "minutes.")
+    averageExamTime = (ExamTime/patientsSeen)
+    print("The average time spent in an Exam Room was ", averageExamTime, "minutes.")
 main()
