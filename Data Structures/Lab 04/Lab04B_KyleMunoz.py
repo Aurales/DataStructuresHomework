@@ -19,36 +19,31 @@ def recursivefib(n):
         return 1
     else:
         return recursivefib(n-1) + recursivefib(n-2)
-
 #Dynamic Fib
-key = []
-value = []
-def dynamicfib(n):
-    if n <= 1:
-        key.append(n)
-        value.append(1)
-        return 1
-    else:
-        if n in key:
-            ind = key.index(n)
-##            print("index:",ind)
-##            print("key list", key)
-##            print("value list",value)
-            return value[ind]
-        else:
-            value.append(dynamicfib(n-1) + dynamicfib(n-2))
-            key.append(n)
-            ind = key.index(n)
-##            print("index b:",ind)
-##            print("key list b", key)
-##            print("value list b",value)
-            return value[ind]
+n = 35
+key = [1,1]
+for i in range(n):
+    key.append(0)
+
+
+def dynfib(x):
+    #Check for x in the list
+    #if x = 0, calculate and store
+    #otherwise, return value from list
+    #print(key)
+    if key[x] == 0:
+       key[x] = fib(x-1) + fib(x-2)
+    return key[x]
+
+
 
 
 def main():
+    for x in range(100):
+            key.append(0)
     for i in range(30,101,10):
         starttime = time.time()
-        dynamicfib(i)
+        dynfib(i)
         endtime = time.time()
         totaltime = endtime - starttime
         print("It took", totaltime, "seconds to do the dynamic Fibonacci sequence of", i)
